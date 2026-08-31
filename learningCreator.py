@@ -19,7 +19,9 @@ class PatchEmbeddings(nn.Module):
             nn.Conv2d(in_channels, emb_size, kernel_size=patch_size, stride=patch_size),
             Rearrange('b e (h) -> b (h w) e')
         )
-
+        self.cls_token = nn.Parameter(torch.rand(1, 1, emb_size))
+        self.pos_embed = nn.Parameter(PositionalEmbedding((img_size // patch_size)**2 + 1, emb_size))
+    
     def  forward(self, x:Tensor) -> Tensor:
         b, _, _, _ = x.shape
         x = self.embed(x)
