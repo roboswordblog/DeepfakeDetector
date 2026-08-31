@@ -12,4 +12,9 @@ class PatchEmbeddings(nn.Module):
             nn.Conv2d(in_channels, emb_size, kernel_size=patch_size, stride=patch_size),
             Rearrange('b e (h) -> b (h w) e')
         )
+
+    def  forward(self, x:Tensor) -> Tensor:
+        b, _, _, _ = x.shape
+        x = self.embed(x)
+        return x
         
