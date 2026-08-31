@@ -26,6 +26,8 @@ class PatchEmbeddings(nn.Module):
         b, _, _, _ = x.shape
         x = self.embed(x)
         return x
+
+
 class MultiHead(nn.Module):
     def __init__(self, emb_size, num_head):
         super().__init__()
