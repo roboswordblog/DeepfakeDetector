@@ -42,4 +42,10 @@ class MultiHead(nn.Module):
         k = rearrange(self.key(x), 'b n (h e) - > b h n e', h=self.num_head)
         q = rearrange(self.query(x), 'b n (h e) - > b h n e', h=self.num_head)       
         v = rearrange(self.value(x), 'b n (h e) - > b h n e', h=self.num_head)
-        
+        wei = q@k.transpose(3,2)/self.head_dim ** 0.5
+        wei = F.softmax(wei, dim=2)
+        wei = self.att_dr(wei)
+        out = wei@v
+        out = rearrange(out, 'b h n e -> b n (h e)')
+        return out
+          
