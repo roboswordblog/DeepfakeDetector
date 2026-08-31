@@ -59,4 +59,16 @@ class FeedForward(nn.Module):
 
     def forward(self, x):
         return self.ff(x)
-          
+
+class Block(nn.Module):
+    def __init__(self, emb_size, num_head):
+        super().__init__()
+        self.att = MultiHead(emb_size, num_head)
+        self.ll = nn.LayerNorm(emb_size)
+        self.dropout = nn.Dropout(0.1)
+        self.ff = FeedForward(emb_size)
+
+    def forward(self, x):
+        x = x + self.dropout(self.att(self.ll(x)))
+        x = x +  self.dropout(self.ff(self.ll(x)))
+        return x
