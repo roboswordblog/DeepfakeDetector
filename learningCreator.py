@@ -72,3 +72,8 @@ class Block(nn.Module):
         x = x + self.dropout(self.att(self.ll(x)))
         x = x +  self.dropout(self.ff(self.ll(x)))
         return x
+        
+class VisionTransformer(nn.Module):
+    def __init__(self, num_layerss, img_size, emb_size, patch_size, num_head, num_class):
+        super().__init__()
+        
