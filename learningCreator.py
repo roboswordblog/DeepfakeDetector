@@ -48,4 +48,15 @@ class MultiHead(nn.Module):
         out = wei@v
         out = rearrange(out, 'b h n e -> b n (h e)')
         return out
+
+class FeedForward(nn.Module):
+    def __init__(self, emb_size):
+        super().__init__()
+        self.ff = nn.Sequential(
+            nn.Linear(emb_size, 4*emb_size),
+            nn.Linear(emb_size, 4*emb_size)
+        )
+
+    def forward(self, x):
+        return self.ff(x)
           
