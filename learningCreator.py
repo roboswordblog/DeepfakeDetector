@@ -26,4 +26,14 @@ class PatchEmbeddings(nn.Module):
         b, _, _, _ = x.shape
         x = self.embed(x)
         return x
+
+class MultiHead(nn.Module):
+    def __init__(self, emb_size, num_head):
+        super().__init__()
+        self.emb_size = emb_size
+        self.num_head = num_head
+        self.key = nn.Linear(emb_size, emb_size)
+        self.value = nn.Linear(emb_size, emb_size)
+        self.query =  nn.Linear(emb_size, emb_size)
+        self.att_dr = nn.Dropout(0.1)
         
