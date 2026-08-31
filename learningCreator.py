@@ -39,6 +39,7 @@ class MultiHead(nn.Module):
         self.att_dr = nn.Dropout(0.1)
 
     def forward(self, x):
-        k = self.key(x)
-        q = self.value(x)
-        v = self.query(x)
+        k = rearrange(self.key(x), 'b n (h e) - > b h n e', h=self.num_head)
+        q = rearrange(self.query(x), 'b n (h e) - > b h n e', h=self.num_head)       
+        v = rearrange(self.value(x), 'b n (h e) - > b h n e', h=self.num_head)
+        
