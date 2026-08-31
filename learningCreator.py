@@ -4,6 +4,13 @@ import torch
 import pathlib
 import torch.nn.functional as F
 
+def PositionalEmbedding(seq_len, emb_size):
+    embeddings = torch.ones(seq_len, emb_size)
+    for i in range(seq_lean):
+        for j in range(emb_size):
+            embeddings[i][j] = np.sin(i / (pow(10000, j/emb_size)) if j % 2 == 0 else np.cos(i / pow(10000, (j-1) / emb_size)))
+    return torch.tensor(embeddings)
+
 class PatchEmbeddings(nn.Module):
     def __init__(self, in_channels: int = 3, patch_size: int=16, emb_size:int = 768, img_size=224):
         self.patch_size = patch_size
