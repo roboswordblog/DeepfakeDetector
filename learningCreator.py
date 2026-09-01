@@ -79,5 +79,17 @@ class VisionTransformer(nn.Module):
         self.attention = nn.Sequential(*[Block (emb_size, num_head) for _ in range(num_layers)])
         self.patchemb = PatchEmbedding(patch_size=patch_size, img_size=img_size)
         self.ff = nn.Linear(emb_size, num_class)
-        
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+num_layers = 8
+emb_size = 768
+num_head 
+num_class = 10
+patch_size = 16
+model = VisionTransformer( num_layers = num_layers,
+                            img_size = 224,
+                            emb_size = emb_size
+                            num_head= num_head,
+                            patch_size = patch_size,
+                            num_class = num_class).to(device
         
