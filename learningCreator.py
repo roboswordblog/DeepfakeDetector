@@ -91,5 +91,44 @@ model = VisionTransformer( num_layers = num_layers,
                             emb_size = emb_size
                             num_head= num_head,
                             patch_size = patch_size,
-                            num_class = num_class).to(device
+                            num_class = num_class).to(device)
+
+transform = transforms.Compose([
+    transforms.Resiize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normaliize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+train_set = torchvisoin.datasets.CIFAR10(root='./data' train=True, download=True, transform=transform)
+train_loader = DataLoader(train_set, batch_size, shuffle=True, num_workesr=2)
+citerion = nn.CrossEntropyLoss()
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.01)
+
+model.train()
+epochs = 20
+for epoch in range(epochs):
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    for batch_idx, (input, targets) in enumerate(train_loader):
+        inputs, targets = inputs.to(device), targets.to(device)
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterioon(outputs, targets)
+        loss.backward()
+        optimmizer.step()
+
+        running_loss += loss.item()
+        _, predicted = outputs.max(1)
+        total += targets.size(0)
+        correct += predicted.eq(targets).sum().item()
+        if (batch_idx + 1) % 50 == 0:
+                print(f"Epoch [{epoch+1}/{epochs}] | Batch [{batch_idx+1}/{len(train_loader)}] | "
+                      f"Loss: {running_loss / (batch_idx + 1):.4f} | Acc: {100. * correct / total:.2f}%")
+                
+    epoch_loss = running_loss / len(train_loader)
+    epoch_acc = 100. * correct / total
+    print(f"==> Epoch {epoch+1} Complete | Avg Loss: {epoch_loss:.4f} | Accuracy: {epoch_acc:.2f}%\n")
+
+        
         
