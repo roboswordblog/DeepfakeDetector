@@ -154,3 +154,23 @@ print(f"Final Test Results | Loss: {final_test_loss:.4f} | Accuracy: {final_test
 
 MODEL_SAVE_PATH = "model/deepfakeDetector.pth"
 torch.save(model.state_dict(), MODEL_SAVE_PATH)
+
+test_loss, test_correct, test_total = 0.0, 0, 0
+
+with torch.no_grad():
+    for inputs, targets in test_loader:
+        inputs, targets = inputs.to(device), targets.to(device)
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+        
+        test_loss += loss.item()
+        _, predicted = outputs.max(1)
+        test_total += targets.size(0)
+        test_correct += predicted.eq(targets).sum().item()
+
+final_test_loss = test_loss / len(test_loader)
+final_test_acc = 100. * test_correct / test_total
+print(f"Final Test Results | Loss: {final_test_loss:.4f} | Accuracy: {final_test_acc:.2f}%")
+
+MODEL_SAVE_PATH = "model/deepfakeDetector.pth"
+torch.save(model.state_dict(), MODEL_SAVE_PATH)
