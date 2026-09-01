@@ -96,3 +96,6 @@ load_path = pathlib.Path("model/deepfakeDetector.pth")
 loaded_model.load_state_dict(torch.load(load_path, weights_only=True))
 loaded_model.eval()
 
+def getResult(input):
+    return model(inputs)
+    
