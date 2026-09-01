@@ -149,4 +149,8 @@ with torch.no_grad():
 
 final_test_loss = test_loss / len(test_loader)
 final_test_acc = 100. * test_correct / test_total
-print(f"🏁 Final Test Results | Loss: {final_test_loss:.4f} | Accuracy: {final_test_acc:.2f}%")
+print(f"Final Test Results | Loss: {final_test_loss:.4f} | Accuracy: {final_test_acc:.2f}%")
+
+
+MODEL_SAVE_PATH = "model/deepfakeDetector.pth"
+torch.save(model.state_dict(), MODEL_SAVE_PATH)
