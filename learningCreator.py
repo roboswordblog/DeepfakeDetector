@@ -100,6 +100,7 @@ transform = transforms.Compose([
 ])
 train_set = torchvisoin.datasets.CIFAR10(root='./data' train=True, download=True, transform=transform)
 train_loader = DataLoader(train_set, batch_size, shuffle=True, num_workesr=2)
+test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2)
 
 citerion = nn.CrossEntropyLoss()
