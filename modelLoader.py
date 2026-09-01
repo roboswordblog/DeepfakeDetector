@@ -92,7 +92,7 @@ model = VisionTransformer( num_layers = num_layers,
                             patch_size = patch_size,
                             num_class = num_class).to(device)
 
-load_path = pathlib.Path("model_weights.pth")
+load_path = pathlib.Path("model/deepfakeDetector.pth")
 loaded_model.load_state_dict(torch.load(load_path, weights_only=True))
 loaded_model.eval()
 
