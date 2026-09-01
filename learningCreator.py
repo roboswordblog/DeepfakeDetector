@@ -76,4 +76,6 @@ class Block(nn.Module):
 class VisionTransformer(nn.Module):
     def __init__(self, num_layerss, img_size, emb_size, patch_size, num_head, num_class):
         super().__init__()
+        self.attention = nn.Sequential(*[Block (emb_size, num_head) for _ in range(num_layers)])
+        
         
