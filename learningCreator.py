@@ -100,6 +100,8 @@ transform = transforms.Compose([
 ])
 train_set = torchvisoin.datasets.CIFAR10(root='./data' train=True, download=True, transform=transform)
 train_loader = DataLoader(train_set, batch_size, shuffle=True, num_workesr=2)
+test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2)
+
 citerion = nn.CrossEntropyLoss()
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.01)
 
@@ -130,5 +132,20 @@ for epoch in range(epochs):
     epoch_acc = 100. * correct / total
     print(f"==> Epoch {epoch+1} Complete | Avg Loss: {epoch_loss:.4f} | Accuracy: {epoch_acc:.2f}%\n")
 
+model.eval()
+test_loss, test_correct, test_total = 0.0, 0, 0
+
+with torch.no_grad():
+    for inputs, targets in test_loader:
+        inputs, targets = inputs.to(device), targets.to(device)
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
         
-        
+        test_loss += loss.item()
+        _, predicted = outputs.max(1)
+        test_total += targets.size(0)
+        test_correct += predicted.eq(targets).sum().item()
+
+final_test_loss = test_loss / len(test_loader)
+final_test_acc = 100. * test_correct / test_total
+print(f"🏁 Final Test Results | Loss: {final_test_loss:.4f} | Accuracy: {final_test_acc:.2f}%")
