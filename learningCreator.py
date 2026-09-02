@@ -6,10 +6,13 @@ import torch.nn.functional as F
 from einops.layers.torch import Rearrange
 from einops import rearrange
 from torch import Tensor
+from torchvision import transforms
+import numpy as np
+import torchvision
 
 def PositionalEmbedding(seq_len, emb_size):
     embeddings = torch.ones(seq_len, emb_size)
-    for i in range(seq_lean):
+    for i in range(seq_len):
         for j in range(emb_size):
             embeddings[i][j] = np.sin(i / (pow(10000, j/emb_size)) if j % 2 == 0 else np.cos(i / pow(10000, (j-1) / emb_size)))
     return torch.tensor(embeddings)
@@ -20,7 +23,7 @@ class PatchEmbeddings(nn.Module):
         super().__init__()
         self.embed = nn.Sequential(
             nn.Conv2d(in_channels, emb_size, kernel_size=patch_size, stride=patch_size),
-            Rearrange('b e (h) -> b (h w) e')
+           Rearrange('b e h w -> b (h w) e')
         )
         self.cls_token = nn.Parameter(torch.rand(1, 1, emb_size))
         self.pos_embed = nn.Parameter(PositionalEmbedding((img_size // patch_size)**2 + 1, emb_size))
@@ -40,11 +43,12 @@ class MultiHead(nn.Module):
         self.value = nn.Linear(emb_size, emb_size)
         self.query =  nn.Linear(emb_size, emb_size)
         self.att_dr = nn.Dropout(0.1)
+        self.head_dim = emb_size // num_head
 
     def forward(self, x):
-        k = rearrange(self.key(x), 'b n (h e) - > b h n e', h=self.num_head)
-        q = rearrange(self.query(x), 'b n (h e) - > b h n e', h=self.num_head)       
-        v = rearrange(self.value(x), 'b n (h e) - > b h n e', h=self.num_head)
+        k = rearrange(self.key(x), 'b n (h e) -> b h n e', h=self.num_head)
+        q = rearrange(self.query(x), 'b n (h e) -> b h n e', h=self.num_head)       
+        v = rearrange(self.value(x), 'b n (h e) -> b h n e', h=self.num_head)
         wei = q@k.transpose(3,2)/self.head_dim ** 0.5
         wei = F.softmax(wei, dim=2)
         wei = self.att_dr(wei)
@@ -97,11 +101,11 @@ model = VisionTransformer( num_layers = num_layers,
                             num_class = num_class).to(device)
 
 transform = transforms.Compose([
-    transforms.Resiize((224, 224)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
-    transforms.Normaliize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
-train_set = torchvisoin.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 train_loader = DataLoader(train_set, batch_size, shuffle=True, num_workesr=2)
 test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2)
