@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch
 import pathlib
 import torch.nn.functional as F
+from einops.layers.torch import Rearrange
+from einops import rearrange
 
 def PositionalEmbedding(seq_len, emb_size):
     embeddings = torch.ones(seq_len, emb_size)
