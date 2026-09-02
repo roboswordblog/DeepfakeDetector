@@ -77,10 +77,10 @@ class Block(nn.Module):
         return x
         
 class VisionTransformer(nn.Module):
-    def __init__(self, num_layerss, img_size, emb_size, patch_size, num_head, num_class):
+    def __init__(self, num_layers, img_size, emb_size, patch_size, num_head, num_class):
         super().__init__()
         self.attention = nn.Sequential(*[Block (emb_size, num_head) for _ in range(num_layers)])
-        self.patchemb = PatchEmbedding(patch_size=patch_size, img_size=img_size)
+        self.patchemb = PatchEmbeddings(patch_size=patch_size, img_size=img_size)
         self.ff = nn.Linear(emb_size, num_class)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
